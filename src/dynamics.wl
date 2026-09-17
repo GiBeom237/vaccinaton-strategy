@@ -1,0 +1,83 @@
+(* ::Package:: *)
+
+(* ::Input::Initialization:: *)
+(*Disease transitions,protection updates,and movement.*)
+
+functions=( 
+
+(*Apply the scheduled state change.*)evolveDisease[timeslot_][id_]:=Block[{nstate},nstate=agList[[id]][[NSTATE]];
+Which[nstate=!=DEAD,agList[[id]][[CSTATE]]=nstate;
+agList[[id]][[NSTATE]]=SUSCEPTIBLE;
+agList[[id]][[TIMER]]=\[Infinity];
+setNext[timeslot][id],nstate===DEAD,agList[[id]][[CSTATE]]=nstate;
+agList[[id]][[NSTATE]]=DEAD;
+agList[[id]][[TIMER]]=0;
+dsIDList[DEAD]["Push",id]]];
+
+(*Choose the next transition for the current state.*)setNext[timeslot_][id_]:=Block[{cstate},cstate=agList[[id]][[CSTATE]];
+Which[cstate===SUSCEPTIBLE,setNextSusc[timeslot,id],cstate===EXPOSED,setNextExpo[timeslot,id],cstate===MILD,setNextMild[timeslot,id],cstate===SEVERE,setNextSevere[timeslot,id],cstate===PROTECTED,setNextProtc[timeslot,id]]];
+
+(*Compute infection probability from local infectious counts.*)pSUEX[id_]:=Block[{xpos,ypos,numcontg},{xpos,ypos}={agList[[id]][[XPOS]],agList[[id]][[YPOS]]};
+numcontg=memoMat[[xpos,ypos]];
+Return[1-(((1-perCapitaRate))^(numcontg))]];
+
+(*Test whether a susceptible agent becomes exposed.*)setNextSusc[timeslot_,id_]:=Block[{isExposed},isExposed=(RandomVariate[BernoulliDistribution[pSUEX[id]]]===1);
+Which[isExposed,agList[[id]][[CSTATE]]=EXPOSED;
+setNextExpo[timeslot,id],True,dsBuffer["Push",id]]];
+
+(*Schedule mild illness or a return to susceptibility.*)setNextExpo[timeslot_,id_]:=Block[{isSpsToBeMild},isSpsToBeMild=(RandomVariate[BernoulliDistribution[pEXIM]]===1);
+Which[isSpsToBeMild,agList[[id]][[NSTATE]]=MILD;
+agList[[id]][[TIMER]]=RandomVariate[GeometricDistribution[rEXIM]]+1+timeslot;
+dsBuffer["Push",id],True,agList[[id]][[NSTATE]]=SUSCEPTIBLE;
+agList[[id]][[TIMER]]=RandomVariate[GeometricDistribution[rEXSU]]+1+timeslot;
+dsBuffer["Push",id]]];
+
+(*Schedule the next state after mild illness.*)setNextMild[timeslot_,id_]:=Block[{willBeRecovered,shlvFull,willMakeShld},willBeRecovered=(RandomVariate[BernoulliDistribution[pIMPR]]===1);
+willMakeShld=(RandomVariate[BernoulliDistribution[pMakeSHLD]]===1);
+shlvFull=(agList[[id]][[SHLV]]===FULL);
+Which[(willBeRecovered&&willMakeShld)||shlvFull,agList[[id]][[NSTATE]]=PROTECTED;
+agList[[id]][[TIMER]]=RandomVariate[GeometricDistribution[rIMPR]]+1+timeslot;
+dsBuffer["Push",id],willBeRecovered&&!shlvFull&&!willMakeShld,agList[[id]][[NSTATE]]=SUSCEPTIBLE;
+agList[[id]][[TIMER]]=RandomVariate[GeometricDistribution[rIMSU]]+1+timeslot;
+dsBuffer["Push",id],True,agList[[id]][[NSTATE]]=SEVERE;
+agList[[id]][[TIMER]]=RandomVariate[GeometricDistribution[rIMIS]]+1+timeslot;
+dsBuffer["Push",id]]];
+
+(*Schedule the next state after severe illness.*)setNextSevere[timeslot_,id_]:=Block[{willBeRecovered,shlvFull,willMakeShld},willBeRecovered=(RandomVariate[BernoulliDistribution[pISPR]]===1);
+willMakeShld=(RandomVariate[BernoulliDistribution[pMakeSHLD]]===1);
+shlvFull=(agList[[id]][[SHLV]]===FULL);
+Which[(willBeRecovered&&willMakeShld)||shlvFull,agList[[id]][[NSTATE]]=PROTECTED;
+agList[[id]][[TIMER]]=RandomVariate[GeometricDistribution[rISPR]]+1+timeslot;
+dsBuffer["Push",id],willBeRecovered&&!shlvFull&&!willMakeShld,agList[[id]][[NSTATE]]=SUSCEPTIBLE;
+agList[[id]][[TIMER]]=RandomVariate[GeometricDistribution[rISSU]]+1+timeslot;
+dsBuffer["Push",id],True,agList[[id]][[NSTATE]]=DEAD;
+agList[[id]][[TIMER]]=RandomVariate[GeometricDistribution[rISDE]]+1+timeslot;
+dsBuffer["Push",id]]];
+
+(*Schedule the end of protection.*)setNextProtc[timeslot_,id_]:=(agList[[id]][[NSTATE]]=SUSCEPTIBLE;
+Which[agList[[id]][[SHLV]]=!=FULL,agList[[id]][[TIMER]]=RandomVariate[GeometricDistribution[rNoShldPRSU]]+1+timeslot;
+dsBuffer["Push",id],True,agList[[id]][[TIMER]]=RandomVariate[GeometricDistribution[rShldPRSU]]+1+timeslot;
+dsBuffer["Push",id]];);
+
+(*Resolve overlapping protection and disease timers.*)checkSpecialCases[timeslot_][{id_,oldTimer_}]:=Block[{cstate,newNstate,newTimer},cstate=agList[[id]][[CSTATE]];
+newNstate=agList[[id]][[NSTATE]];
+newTimer=agList[[id]][[TIMER]];
+Which[cstate===EXPOSED&&newNstate===MILD&&newTimer<oldTimer,agCreatingShldList=DeleteCases[agCreatingShldList,{id,oldTimer}],cstate===EXPOSED&&newTimer>=oldTimer,agList[[id]][[NSTATE]]=PROTECTED;
+agList[[id]][[TIMER]]=oldTimer;
+agCreatingShldList=DeleteCases[agCreatingShldList,{id,oldTimer}],timeslot===oldTimer,agList[[id]][[CSTATE]]=PROTECTED;
+setNextProtc[timeslot,id];
+agCreatingShldList=DeleteCases[agCreatingShldList,{id,oldTimer}]]];
+
+(*Return the agent to its current state collection.*)releaseBuffer[id_]:=Block[{cstate},cstate=agList[[id]][[CSTATE]];
+dsIDList[cstate]["Push",id]];
+
+(*Treat exposed and mildly ill agents as contagious.*)isContagious[id_]:=(agList[[id]][[CSTATE]]===EXPOSED||agList[[id]][[CSTATE]]===MILD);
+
+(*Move within the grid and update local infectious counts.*)relocateAgent[timeslot_][id_]:=Block[{currX,currY,nextX,nextY},currX=agList[[id]][[XPOS]];
+currY=agList[[id]][[YPOS]];
+Which[1<currX<XSIZE,nextX=currX+RandomChoice[{-1,0,1}],currX===1,nextX=currX+RandomChoice[{0,1}],currX===XSIZE,nextX=currX+RandomChoice[{-1,0}]];
+Which[1<currY<YSIZE,nextY=currY+RandomChoice[{-1,0,1}],currY===1,nextY=currY+RandomChoice[{0,1}],currY===YSIZE,nextY=currY+RandomChoice[{-1,0}]];
+agList[[id]][[XPOS]]=nextX;
+agList[[id]][[YPOS]]=nextY;
+If[isContagious[id],memoMat[[nextX,nextY]]+=1;];];
+)

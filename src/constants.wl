@@ -1,0 +1,47 @@
+(* ::Package:: *)
+
+(* ::Input::Initialization:: *)
+(*Population size and grid dimensions.*)
+POPULATION=100;
+XSIZE=14;
+YSIZE=4;
+
+(*Agent fields,disease states,and protection levels.*)
+{ID,CSTATE,NSTATE,SHLV,TIMER,XPOS,YPOS}={1,2,3,4,5,6,7};
+{SUSCEPTIBLE,PROTECTED,EXPOSED,MILD,SEVERE,DEAD}={1,2,3,4,5,6};
+{NONE,PARTIAL,FULL}={0,1,2};
+
+(*Number of time steps per model day.*)
+DAYS=4*24; (*one time-slot represents 15 minutes*)
+
+(*Protection probabilities and delays until sheild-creation.*)
+\[Pi]1=.02;
+\[Pi]2=.95;
+tau11=7(DAYS);
+tau21=3(DAYS);
+
+(*Infection probability per contagious agent.*)
+perCapitaRate=.95;
+
+(*Transition probabilities and rates from exposure.*)
+pEXIM=.95;
+rEXIM=1/(4 DAYS);
+pEXSU=1-pEXIM;
+rEXSU=1/(1 DAYS);
+
+(*Probability of developing protection when recovered.*)
+pMakeSHLD=.64;
+
+(*Transition probabilities and rates.*)
+pIMPR=.94;
+rIMPR=rIMSU=1/(14 DAYS);
+pIMIS=1-pIMPR;
+rIMIS=1/(7 DAYS);
+
+rShldPRSU=1/(180 DAYS); (*Rates of protection loss.*)
+rNoShldPRSU=1/(90 DAYS);
+
+pISPR=.84;
+rISPR=rISSU=1/(10.65 DAYS);
+pISDE=1-pISPR;
+rISDE=1/(5.65 DAYS);
