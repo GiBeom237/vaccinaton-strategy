@@ -1,5 +1,5 @@
 
-Vaccination Strategy Simulation
+COVID-19 Vaccination Strategy Simulation
 ======================================================================
 
 
