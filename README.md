@@ -17,7 +17,7 @@ For detailed information about the simulation, please refer to https://academicw
 
 (1) Install Wolfram Mathematica. Any version that was released 2022 should work.
 
-(2) Download all the files in one folder.
+(2) Download the ZIP file and extract it.
 
 (3) Open main.nb
 
