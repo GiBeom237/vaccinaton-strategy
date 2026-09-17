@@ -92,6 +92,8 @@ where n is the number of contagious agents in the cell.
 
 - Each agent is represented by a circle with an ID in it.
 - The severe and the dead are placed in a separate area below the grid.
+- To play the animation, click + button on the top left corner in the animation box, and click the play button.
+- One can modify the speed of the animation, or drag the status bar to the left or right.
 
 
 ----------------------------------------------------------------------
