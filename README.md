@@ -101,7 +101,7 @@ where n is the number of contagious agents in the cell.
 - src
   - /constants.wl: Constants, the transition probabilities and delays
   - /datastructure.wl: Data structures for agents’ history (health states, location, etc)
-  - /dinamics.wl: Virus transmission probability, antibody-production rule and agent-movement rule.
+  - /dynamics.wl: Virus transmission probability, antibody-production rule and agent-movement rule.
   - /visualization.wl: Time series and animation
   - /initialization.wl: Initialization of the program
   - /simulation.wl: The main loop of the simulation
