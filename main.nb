@@ -1,0 +1,239 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 13.1' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[      8510,        231]
+NotebookOptionsPosition[      8165,        217]
+NotebookOutlinePosition[      8556,        233]
+CellTagsIndexPosition[      8513,        230]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", 
+   RowBox[{"*", " ", 
+    RowBox[{"--", 
+     RowBox[{"-", 
+      RowBox[{"--", 
+       RowBox[{"--", 
+        RowBox[{"--", 
+         RowBox[{"--", 
+          RowBox[{"--", 
+           RowBox[{"--", 
+            RowBox[{"--", 
+             RowBox[{"--", 
+              RowBox[{"--", 
+               RowBox[{"--", 
+                RowBox[{"--", 
+                 RowBox[{"--", 
+                  RowBox[{"--", 
+                   RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{
+                    "--", "-"}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}\
+]}]}]}]}]}]}]}], " ", "**)"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{
+    "*", " ", "Click", " ", "the", " ", "input", " ", "cell", " ", "and", " ",
+      "press", " ", "Shift"}], "+", 
+    RowBox[{"Enter", " ", "to", " ", "run", " ", "the", " ", "simulation"}]}],
+    " ", "**)"}], "\n", 
+  RowBox[{"(*", 
+   RowBox[{"*", " ", 
+    RowBox[{"--", 
+     RowBox[{"-", 
+      RowBox[{"--", 
+       RowBox[{"--", 
+        RowBox[{"--", 
+         RowBox[{"--", 
+          RowBox[{"--", 
+           RowBox[{"--", 
+            RowBox[{"--", 
+             RowBox[{"--", 
+              RowBox[{"--", 
+               RowBox[{"--", 
+                RowBox[{"--", 
+                 RowBox[{"--", 
+                  RowBox[{"--", 
+                   RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{
+                    "--", "-"}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}\
+]}]}]}]}]}]}]}], " ", "**)"}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{"Initial", " ", "exposed", " ", 
+    RowBox[{"fraction", "."}]}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"initRateExposed", "=", ".2"}], ";"}], "\n", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+    "Total", " ", "amount", " ", "of", " ", "vaccine", " ", "as", " ", "a", 
+     " ", "percentage", " ", "of", " ", 
+     RowBox[{"population", "."}]}], " ", "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"totalDosePercent", "=", "100"}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+    "Agents", " ", "assigned", " ", "one", " ", "dose", " ", "as", " ", "a", 
+     " ", "percentage", " ", "of", " ", "population", "."}], " ", "*)"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"partialAllocationControl", "=", "50"}], ";"}], 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+    "Record", " ", "agent", " ", "history", " ", "for", " ", "animation", 
+     "."}], " ", "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"recordAgents", "=", "True"}], ";"}], "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", 
+   RowBox[{"Module", "[", 
+    RowBox[{
+     RowBox[{"{", "files", "}"}], ",", 
+     RowBox[{"(*", " ", 
+      RowBox[{
+      "Locate", " ", "the", " ", "modules", " ", "next", " ", "to", " ", 
+       "this", " ", "notebook", "."}], " ", "*)"}], "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"files", "=", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"FileNameJoin", "[", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"NotebookDirectory", "[", "]"}], ",", "\"\<src\>\"", ",", 
+            "#"}], "}"}], "]"}], "&"}], "/@", 
+        RowBox[{"{", 
+         RowBox[{
+         "\"\<constants.wl\>\"", ",", "\"\<datastructure.wl\>\"", ",", 
+          "\"\<dynamics.wl\>\"", ",", "\"\<visualization.wl\>\"", ",", 
+          "\"\<initialization.wl\>\"", ",", "\"\<simulation.wl\>\""}], 
+         "}"}]}]}], ";", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+      RowBox[{"(*", " ", 
+       RowBox[{
+       "Load", " ", "the", " ", "modules", " ", "in", " ", "order", "."}], 
+       " ", "*)"}], "\[IndentingNewLine]", 
+      RowBox[{"Scan", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"If", "[", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"Check", "[", 
+             RowBox[{
+              RowBox[{"Get", "[", "#", "]"}], ",", "$Failed"}], "]"}], "===", 
+            "$Failed"}], ",", 
+           RowBox[{"Abort", "[", "]"}]}], "]"}], "&"}], ",", "files"}], "]"}],
+       ";", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+      RowBox[{"(*", " ", 
+       RowBox[{
+       "Set", " ", "the", " ", "random", " ", "seed", " ", "and", " ", "run", 
+        " ", "the", " ", "simulation", "."}], " ", "*)"}], 
+      "\[IndentingNewLine]", 
+      RowBox[{"SeedRandom", "[", "2023", "]"}], ";", "\[IndentingNewLine]", 
+      RowBox[{"initialize", "[", 
+       RowBox[{"totalDosePercent", ",", "partialAllocationControl"}], "]"}], 
+      ";", "\[IndentingNewLine]", 
+      RowBox[{"mainloop", "[", "recordAgents", "]"}], ";", 
+      "\[IndentingNewLine]", "\[IndentingNewLine]", 
+      RowBox[{"(*", " ", 
+       RowBox[{
+       "Prepare", " ", "recorded", " ", "positions", " ", "for", " ", 
+        "animation", "."}], " ", "*)"}], "\[IndentingNewLine]", 
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"prepareAnimation", "[", "]"}], "===", "$Failed"}], ",", 
+        RowBox[{"Return", "[", 
+         RowBox[{"listplot", "[", "1", "]"}], "]"}]}], "]"}], ";", 
+      "\[IndentingNewLine]", "\[IndentingNewLine]", 
+      RowBox[{"(*", " ", 
+       RowBox[{
+       "Display", " ", "the", " ", "plot", " ", "and", " ", "animation", 
+        "."}], " ", "*)"}], "\[IndentingNewLine]", 
+      RowBox[{"Column", "[", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"listplot", "[", "1", "]"}], ",", 
+         RowBox[{"Manipulate", "[", 
+          RowBox[{
+           RowBox[{"animate", "[", "t", "]"}], ",", 
+           RowBox[{"{", 
+            RowBox[{"t", ",", "0", ",", 
+             RowBox[{
+              RowBox[{"Length", "[", "locTrj", "]"}], "-", "2"}], ",", 
+             RowBox[{"AnimationRate", "->", ".5"}]}], "}"}]}], "]"}]}], "}"}],
+        "]"}]}]}], "\[IndentingNewLine]", "]"}]}]}]], "Input",
+ CellChangeTimes->{{3.998619656776102*^9, 3.9986197343653297`*^9}, {
+   3.9986197915154047`*^9, 3.9986198088186817`*^9}, {3.998620094636244*^9, 
+   3.9986200959688873`*^9}, {3.998620130154202*^9, 3.998620135604615*^9}, {
+   3.9986207572261553`*^9, 3.998620796700177*^9}, {3.998620868980204*^9, 
+   3.998620878058107*^9}, {3.998620943604231*^9, 3.998620964812867*^9}, 
+   3.9986210352493973`*^9, {3.998621070969017*^9, 3.998621080218422*^9}, {
+   3.998622241287401*^9, 3.998622242839374*^9}, {3.998627238289693*^9, 
+   3.998627370966961*^9}, {3.998630981111352*^9, 3.9986310004887247`*^9}, {
+   3.998638557494441*^9, 
+   3.998638559848936*^9}},ExpressionUUID->"fc10925d-efbe-41bc-bd56-\
+ae7e54246bc0"]
+},
+WindowSize->{808, 803},
+WindowMargins->{{4, Automatic}, {Automatic, 4}},
+FrontEndVersion->"13.1 for Mac OS X x86 (64-bit) (June 16, 2022)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"5c7957d4-bd00-42d1-ba06-005a32aba3bb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[558, 20, 7603, 195, 745, "Input",ExpressionUUID->"fc10925d-efbe-41bc-bd56-ae7e54246bc0"]
+}
+]
+*)
+
